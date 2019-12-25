@@ -1,0 +1,8 @@
+__pycache__/
+.coverage
+.venv/
+debian/rhasspy-g2p-hermes*
+dist/
+*.egg-info/
+pyinstaller/
+phonetisaurus.tar.gz
