@@ -9,8 +9,8 @@ debian_package := rhasspy-g2p-hermes_$(version)_$(architecture)
 debian_dir := debian/$(debian_package)
 
 check:
-	flake8 rhasspyg2p_hermes/*.py
-	pylint rhasspyg2p_hermes/*.py
+	flake8 rhasspyg2p_hermes/*.py test/*.py
+	pylint rhasspyg2p_hermes/*.py test/*.py
 
 venv: phonetisaurus.tar.gz
 	rm -rf .venv/

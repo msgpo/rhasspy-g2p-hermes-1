@@ -42,7 +42,9 @@ class G2pHermesMqtt:
 
     # -------------------------------------------------------------------------
 
-    def handle_pronounce(self, request: G2pPronounce):
+    def handle_pronounce(
+        self, request: G2pPronounce
+    ) -> typing.Union[G2pPhonemes, G2pError]:
         """Handle g2p pronounce request"""
         _LOGGER.debug("<- %s", request)
 
@@ -67,26 +69,22 @@ class G2pHermesMqtt:
                 # Join dictionary lookups with guesses
                 phonemes = {**phonemes, **guesses}
 
-            self.publish(
-                G2pPhonemes(
-                    id=request.id,
-                    phonemes=phonemes,
-                    siteId=request.siteId,
-                    sessionId=request.sessionId,
-                )
+            return G2pPhonemes(
+                id=request.id,
+                phonemes=phonemes,
+                siteId=request.siteId,
+                sessionId=request.sessionId,
             )
         except Exception as e:
             _LOGGER.exception("handle_pronounce")
 
             # Publish error message
-            self.publish(
-                G2pError(
-                    id=request.id,
-                    siteId=request.siteId,
-                    sessionId=request.sessionId,
-                    error=str(e),
-                    context=",".join(request.words),
-                )
+            return G2pError(
+                id=request.id,
+                siteId=request.siteId,
+                sessionId=request.sessionId,
+                error=str(e),
+                context=",".join(request.words),
             )
 
     # -------------------------------------------------------------------------
@@ -241,7 +239,7 @@ class G2pHermesMqtt:
                 if not self._check_siteId(json_payload):
                     return
 
-                self.handle_pronounce(G2pPronounce(**json_payload))
+                self.publish(self.handle_pronounce(G2pPronounce(**json_payload)))
         except Exception:
             _LOGGER.exception("on_message")
 
