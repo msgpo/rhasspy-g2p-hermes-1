@@ -1,8 +1,8 @@
 """Grapheme to phoneme Hermes service"""
 import json
 import logging
-import subprocess
 import re
+import subprocess
 import tempfile
 import typing
 from collections import defaultdict
@@ -11,7 +11,7 @@ from pathlib import Path
 import attr
 from rhasspyhermes.base import Message
 
-from .messages import G2pPronounce, G2pPronunciation, G2pPhonemes, G2pError
+from .messages import G2pError, G2pPhonemes, G2pPronounce, G2pPronunciation
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -2,7 +2,6 @@
 import typing
 
 import attr
-
 from rhasspyhermes.base import Message
 
 

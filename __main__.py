@@ -1,4 +1,4 @@
 """PyInstaller entry point"""
-from rhasspynlu_hermes.__main__ import main
+from rhasspyg2p_hermes.__main__ import main
 
 main()

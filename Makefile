@@ -1,32 +1,48 @@
 SHELL := bash
+PYTHON_NAME = rhasspyg2p_hermes
+PACKAGE_NAME = rhasspy-g2p-hermes
+SOURCE = $(PYTHON_NAME)
+PYTHON_FILES = $(SOURCE)/*.py *.py
+SHELL_FILES = bin/* debian/bin/* *.sh
 
-.PHONY: check dist venv test pyinstaller debian deploy
+.PHONY: reformat check dist venv test pyinstaller debian deploy
 
 version := $(shell cat VERSION)
-architecture := $(shell dpkg-architecture | grep DEB_BUILD_ARCH= | sed 's/[^=]\+=//')
+architecture := $(shell bash architecture.sh)
 
 debian_package := rhasspy-g2p-hermes_$(version)_$(architecture)
 debian_dir := debian/$(debian_package)
 
+reformat:
+	black .
+	isort $(PYTHON_FILES)
+
 check:
-	flake8 rhasspyg2p_hermes/*.py test/*.py
-	pylint rhasspyg2p_hermes/*.py test/*.py
+	flake8 $(PYTHON_FILES)
+	pylint $(PYTHON_FILES)
+	mypy $(PYTHON_FILES)
+	black --check .
+	isort --check-only $(PYTHON_FILES)
+	bashate $(SHELL_FILES)
+	yamllint .
+	pip list --outdated
 
 venv: phonetisaurus.tar.gz
 	rm -rf .venv/
 	python3 -m venv .venv
+	.venv/bin/pip3 install --upgrade pip
 	.venv/bin/pip3 install wheel setuptools
-	.venv/bin/pip3 install -r requirements_all.txt
+	.venv/bin/pip3 install -r requirements.txt
+	.venv/bin/pip3 install -r requirements_dev.txt
 	tar -C .venv -xzvf phonetisaurus.tar.gz
 
 phonetisaurus.tar.gz:
 	wget -O "$@" 'https://github.com/synesthesiam/docker-phonetisaurus/releases/download/v2019.1/phonetisaurus-2019-$(architecture).tar.gz'
 
 test:
-	coverage run -m unittest test
-
-coverage:
+	coverage run --source=$(SOURCE) -m pytest
 	coverage report -m
+	coverage xml
 
 dist: sdist debian
 

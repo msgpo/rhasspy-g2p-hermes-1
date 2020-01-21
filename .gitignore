@@ -1,8 +1,11 @@
 __pycache__/
+.mypy_cache/
 .coverage
+coverage.xml
 .venv/
 debian/rhasspy-g2p-hermes*
 dist/
 *.egg-info/
+.vscode/
 pyinstaller/
 phonetisaurus.tar.gz
